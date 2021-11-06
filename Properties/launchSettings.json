@@ -1,0 +1,25 @@
+{
+  "$schema": "http://json.schemastore.org/launchsettings.json",
+  "profiles": {
+    "idb.Backend": {
+      "commandName": "Project",
+      "environmentVariables": {
+        "JWT_LIFETIME_MINUTES": "1440",
+        "JWT_KEY": "00f67078bfdc464a89da166f48b93d65",
+        "JWT_ISSUER": "idb.Backend",
+        "DATABASE": "idb",
+        "JWT_AUDIENCE": "idb",
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "DATABASE_CONNECTION": "mongodb://admin:admin@127.0.0.1:27017/default"
+      },
+      "dotnetRunMessages": "true",
+      "applicationUrl": "https://localhost:5001;http://localhost:5000"
+    },
+    "Docker": {
+      "commandName": "Docker",
+      "launchUrl": "{Scheme}://{ServiceHost}:{ServicePort}",
+      "publishAllPorts": true,
+      "useSSL": true
+    }
+  }
+}
