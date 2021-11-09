@@ -25,7 +25,7 @@ so I decided to create a backend and make it Heroku friendly (keep it cheap as d
 
 ### Requirements
 
--   .net 5
+-   .net 6
 -   Visual Studio Code
     -   C# extensions
 -   Visual Studio
