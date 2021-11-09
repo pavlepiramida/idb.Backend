@@ -55,7 +55,7 @@ namespace idb.Backend.Controllers.v1
         [HttpPost("tags")]
         public async Task<IActionResult> CreateTag([FromBody] PostTagsRequest tag)
         {
-            await _tagRepository.Create(new DataAccess.Models.Tag { name = tag.name, ID = tag.id });
+            await _tagRepository.Create(new Tag { name = tag.name, ID = tag.id });
             return new OkResult();
         }
 
