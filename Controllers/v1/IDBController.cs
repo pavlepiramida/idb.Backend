@@ -39,8 +39,14 @@ namespace idb.Backend.Controllers.v1
         public async Task<IActionResult> GetUsers()
         {
             var users = await _userRepository.Get();
-            var usersDTO = users.ToList().Select(user => new UserResponse(id: user.ID, guid: user.guid, email: user.email,
-                first_name: user.first_name, last_name: user.last_name, joined_at: user.created_at, is_admin: user.is_admin)).ToList();
+            var usersDTO = users.ToList().Select(user => new UserResponse(
+                id: user.ID,
+                guid: user.guid,
+                email: user.email,
+                first_name: user.first_name,
+                last_name: user.last_name,
+                joined_at: user.created_at,
+                is_admin: user.is_admin)).ToList();
             return new OkObjectResult(usersDTO);
         }
 
@@ -48,14 +54,14 @@ namespace idb.Backend.Controllers.v1
         public async Task<IActionResult> GetTags()
         {
             var tags = await _tagRepository.Get();
-            var tagsDTO = tags.ToList().Select(tags => new TagsResponse(id: tags.ID, name: tags.name)).ToList();
+            var tagsDTO = tags.ToList().Select(tag => new TagsResponse(id: tag.ID, name: tag.name)).ToList();
             return new OkObjectResult(tagsDTO);
         }
 
-        [HttpPost("tags")]
-        public async Task<IActionResult> CreateTag([FromBody] PostTagsRequest tag)
+        [HttpPost("tags/{tag}")]
+        public async Task<IActionResult> CreateTag([FromRoute] string tag)
         {
-            await _tagRepository.Create(new Tag { name = tag.name, ID = tag.id });
+            await _tagRepository.Create(new Tag { name = tag });
             return new OkResult();
         }
 
@@ -64,20 +70,21 @@ namespace idb.Backend.Controllers.v1
         public async Task<IActionResult> GetItems([FromQuery] string search, [FromQuery] string tag_ids, [FromQuery] int? user_id)
         {
             User user = null;
-            var tagIds = string.IsNullOrEmpty(tag_ids) && string.IsNullOrWhiteSpace(tag_ids) ? new List<int>(0) : tag_ids.Split().Select(x => int.Parse(x)).ToList();
+            var tagIds = string.IsNullOrEmpty(tag_ids) && string.IsNullOrWhiteSpace(tag_ids) ?
+                new List<int>(0) : tag_ids.Split().Select(int.Parse).ToList();
 
             if (user_id is not null)
                 user = await _userRepository.GetByIDThatIWillDeleteSoon((int)user_id);
 
             var items = await _itemRespository.GetBy(search, tagIds, user?.guid ?? string.Empty);
 
-            return new OkObjectResult(items.Select(x => new Item(id: x.ID,
-                guid: x.guid,
-                name: x.name,
-                tags: x.tags.Select(x => new TagsResponse(x.ID, x.name)).ToList(),
-                content: x.content,
-                content_html: x.content_html,
-                created_at: x.created_at))
+            return new OkObjectResult(items.Select(item => new ItemResponse(id: item.ID,
+                guid: item.guid,
+                name: item.name,
+                tags: item.tags.Select(tag => new TagsResponse(tag.ID, tag.name)).ToList(),
+                content: item.content,
+                content_html: item.content_html,
+                created_at: item.created_at))
                 .ToList());
 
         }
@@ -94,15 +101,13 @@ namespace idb.Backend.Controllers.v1
         {
             var userId = HttpContext.Items["userId"] as string;
             var itemTags = await _tagRepository.GetByIds(itemPost.tag_ids);
-            var newItem = new DataAccess.Models.Item
+            var newItem = new Item
             {
-                ID = 1,
                 tags = itemTags,
                 name = itemPost.name,
                 ownerId = userId,
                 content = itemPost.content,
                 content_html = Markdown.ToHtml(itemPost.content, _pipeline)
-
             };
             await _itemRespository.Create(newItem);
             return new OkObjectResult(newItem);
@@ -118,7 +123,7 @@ namespace idb.Backend.Controllers.v1
             item.content_html = Markdown.ToHtml(patch.content, _pipeline);
             item.tags = tags;
             await _itemRespository.Update(item);
-            return new OkObjectResult(new Item(
+            return new OkObjectResult(new ItemResponse(
                 item.ID,
                 item.guid,
                 item.name,
@@ -138,8 +143,7 @@ namespace idb.Backend.Controllers.v1
     }
 
     public record TagsResponse(int id, string name);
-    public record PostTagsRequest(int id, string name);
-    public record Item(int id, string guid, string name, List<TagsResponse> tags, string content, string content_html, DateTime? created_at);
+    public record ItemResponse(int id, string guid, string name, List<TagsResponse> tags, string content, string content_html, DateTime? created_at);
     public record ItemPostRequest(string name, string content, List<int> tag_ids);
     public record ItemsPatchRequest(string content, List<int> tag_ids);
 }
