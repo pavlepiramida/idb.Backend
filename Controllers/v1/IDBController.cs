@@ -71,7 +71,7 @@ namespace idb.Backend.Controllers.v1
         {
             User user = null;
             var tagIds = string.IsNullOrEmpty(tag_ids) && string.IsNullOrWhiteSpace(tag_ids) ?
-                new List<int>(0) : tag_ids.Split().Select(int.Parse).ToList();
+                new List<int>(0) : tag_ids.Split(",").Select(int.Parse).ToList();
 
             if (user_id is not null)
                 user = await _userRepository.GetByIDThatIWillDeleteSoon((int)user_id);
