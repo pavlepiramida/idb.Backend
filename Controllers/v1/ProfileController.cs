@@ -1,9 +1,9 @@
-﻿using idb.Backend.Attributes;
+﻿using System.Threading.Tasks;
+using idb.Backend.Attributes;
 using idb.Backend.DataAccess.Repositories;
+using idb.Backend.Requests.v1;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using System;
-using System.Threading.Tasks;
 
 namespace idb.Backend.Controllers.v1
 {
@@ -28,9 +28,8 @@ namespace idb.Backend.Controllers.v1
             var user = await _userRepository.Get(userId);
 
             return new OkObjectResult(new UserResponse(id: user.ID, guid: user.guid, email: user.email,
-                first_name: user.first_name, last_name: user.last_name, joined_at: user.created_at, is_admin: user.is_admin));
+                first_name: user.first_name, last_name: user.last_name, joined_at: user.created_at,
+                is_admin: user.is_admin));
         }
     }
-
-    public record UserResponse(int id, string guid, string email, string first_name, string last_name, DateTime joined_at, bool is_admin);
 }

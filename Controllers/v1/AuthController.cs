@@ -1,8 +1,9 @@
-﻿using idb.Backend.DataAccess.Repositories;
+﻿using System.Threading.Tasks;
+using idb.Backend.DataAccess.Repositories;
+using idb.Backend.Requests.v1;
 using idb.Backend.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using System.Threading.Tasks;
 
 namespace idb.Backend.Controllers.v1
 {
@@ -31,12 +32,10 @@ namespace idb.Backend.Controllers.v1
             if (user.password != login.Password)
                 return new BadRequestResult();
 
-            var token = _authService.GenerateJWT(user.guid);
+            var token = _authService.GenerateJwt(user.guid);
 
 
-            return new OkObjectResult(new { token });
+            return new OkObjectResult(new {token});
         }
     }
-
-    public record LoginRequest(string Email, string Password);
 }

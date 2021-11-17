@@ -1,18 +1,18 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.IdentityModel.Tokens;
-using System;
+﻿using System;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
+using Microsoft.IdentityModel.Tokens;
 
 namespace idb.Backend.Middleware
 {
-    public class JWTMiddleware
+    public class JwtMiddleware
     {
         private readonly RequestDelegate _next;
 
-        public JWTMiddleware(RequestDelegate next)
+        public JwtMiddleware(RequestDelegate next)
         {
             _next = next;
         }
@@ -45,7 +45,7 @@ namespace idb.Backend.Middleware
                     ClockSkew = TimeSpan.Zero
                 }, out SecurityToken validatedToken);
 
-                var jwtToken = (JwtSecurityToken)validatedToken;
+                var jwtToken = (JwtSecurityToken) validatedToken;
                 var userId = jwtToken.Claims.First(x => x.Type == "userId").Value;
 
                 // attach user to context on successful jwt validation

@@ -1,14 +1,14 @@
-﻿using idb.Backend.Attributes;
+﻿using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using idb.Backend.Attributes;
 using idb.Backend.DataAccess.Models;
 using idb.Backend.DataAccess.Repositories;
+using idb.Backend.Requests.v1;
 using Markdig;
 using Markdig.SyntaxHighlighting.Core;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace idb.Backend.Controllers.v1
 {
@@ -21,9 +21,10 @@ namespace idb.Backend.Controllers.v1
         private readonly MarkdownPipeline _pipeline;
         private readonly IUserRepository _userRepository;
         private readonly ITagRepository _tagRepository;
-        private readonly IItemRepository _itemRespository;
+        private readonly IItemRepository _itemRepository;
 
-        public IDBController(ILogger<IDBController> logger, IUserRepository userRepository, ITagRepository tagRepository, IItemRepository itemRespository)
+        public IDBController(ILogger<IDBController> logger, IUserRepository userRepository,
+            ITagRepository tagRepository, IItemRepository itemRepository)
         {
             _logger = logger;
             _pipeline = new MarkdownPipelineBuilder()
@@ -32,7 +33,7 @@ namespace idb.Backend.Controllers.v1
                 .Build();
             _userRepository = userRepository;
             _tagRepository = tagRepository;
-            _itemRespository = itemRespository;
+            _itemRepository = itemRepository;
         }
 
         [HttpGet("users")]
@@ -61,38 +62,39 @@ namespace idb.Backend.Controllers.v1
         [HttpPost("tags/{tag}")]
         public async Task<IActionResult> CreateTag([FromRoute] string tag)
         {
-            await _tagRepository.Create(new Tag { name = tag });
+            await _tagRepository.Create(new Tag {name = tag});
             return new OkResult();
         }
 
 
         [HttpGet("items")]
-        public async Task<IActionResult> GetItems([FromQuery] string search, [FromQuery] string tag_ids, [FromQuery] int? user_id)
+        public async Task<IActionResult> GetItems([FromQuery] string search, [FromQuery] string tag_ids,
+            [FromQuery] int? user_id)
         {
             User user = null;
-            var tagIds = string.IsNullOrEmpty(tag_ids) && string.IsNullOrWhiteSpace(tag_ids) ?
-                new List<int>(0) : tag_ids.Split(",").Select(int.Parse).ToList();
+            var tagIds = string.IsNullOrEmpty(tag_ids) && string.IsNullOrWhiteSpace(tag_ids)
+                ? new List<int>(0)
+                : tag_ids.Split(",").Select(int.Parse).ToList();
 
             if (user_id is not null)
-                user = await _userRepository.GetByIDThatIWillDeleteSoon((int)user_id);
+                user = await _userRepository.GetByIDThatIWillDeleteSoon((int) user_id);
 
-            var items = await _itemRespository.GetBy(search, tagIds, user?.guid ?? string.Empty);
+            var items = await _itemRepository.GetBy(search, tagIds, user?.guid ?? string.Empty);
 
             return new OkObjectResult(items.Select(item => new ItemResponse(id: item.ID,
-                guid: item.guid,
-                name: item.name,
-                tags: item.tags.Select(tag => new TagsResponse(tag.ID, tag.name)).ToList(),
-                content: item.content,
-                content_html: item.content_html,
-                created_at: item.created_at))
+                    guid: item.guid,
+                    name: item.name,
+                    tags: item.tags.Select(tag => new TagsResponse(tag.ID, tag.name)).ToList(),
+                    content: item.content,
+                    content_html: item.content_html,
+                    created_at: item.created_at))
                 .ToList());
-
         }
 
         [HttpGet("items/{itemId}")]
         public async Task<IActionResult> GetItem(string itemId)
         {
-            var item = await _itemRespository.Get(itemId);
+            var item = await _itemRepository.Get(itemId);
             return new OkObjectResult(item);
         }
 
@@ -109,20 +111,20 @@ namespace idb.Backend.Controllers.v1
                 content = itemPost.content,
                 content_html = Markdown.ToHtml(itemPost.content, _pipeline)
             };
-            await _itemRespository.Create(newItem);
+            await _itemRepository.Create(newItem);
             return new OkObjectResult(newItem);
         }
 
         [HttpPatch("items/{itemId}")]
         public async Task<IActionResult> PatchItems(string itemId, [FromBody] ItemsPatchRequest patch)
         {
-            var item = await _itemRespository.Get(itemId);
+            var item = await _itemRepository.Get(itemId);
             var tags = await _tagRepository.GetByIds(patch.tag_ids);
 
             item.content = patch.content;
             item.content_html = Markdown.ToHtml(patch.content, _pipeline);
             item.tags = tags;
-            await _itemRespository.Update(item);
+            await _itemRepository.Update(item);
             return new OkObjectResult(new ItemResponse(
                 item.ID,
                 item.guid,
@@ -137,13 +139,8 @@ namespace idb.Backend.Controllers.v1
         [HttpDelete("items/{itemId}")]
         public async Task<IActionResult> DeleteItem(string itemId)
         {
-            await _itemRespository.Delete(itemId);
+            await _itemRepository.Delete(itemId);
             return new OkObjectResult(null);
         }
     }
-
-    public record TagsResponse(int id, string name);
-    public record ItemResponse(int id, string guid, string name, List<TagsResponse> tags, string content, string content_html, DateTime? created_at);
-    public record ItemPostRequest(string name, string content, List<int> tag_ids);
-    public record ItemsPatchRequest(string content, List<int> tag_ids);
 }
