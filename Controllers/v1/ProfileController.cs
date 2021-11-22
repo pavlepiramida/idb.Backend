@@ -1,9 +1,9 @@
-﻿using System.Threading.Tasks;
-using idb.Backend.Attributes;
+﻿using idb.Backend.Attributes;
 using idb.Backend.DataAccess.Repositories;
 using idb.Backend.Requests.v1;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using System.Threading.Tasks;
 
 namespace idb.Backend.Controllers.v1
 {

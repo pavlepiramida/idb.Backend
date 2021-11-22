@@ -30,7 +30,7 @@ namespace idb.Backend
             services.AddScoped<ITagRepository, TagRepository>();
             services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc("v1", new OpenApiInfo {Title = "idb.Backend", Version = "v1"});
+                c.SwaggerDoc("v1", new OpenApiInfo { Title = "idb.Backend", Version = "v1" });
             });
             // stop being a smol dick CORSSS
             services.AddCors(options =>
@@ -62,7 +62,7 @@ namespace idb.Backend
 
             app.UseMiddleware<JwtMiddleware>();
 
-            app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
+            app.UseEndpoints(endpoints => endpoints.MapControllers());
         }
     }
 }

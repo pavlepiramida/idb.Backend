@@ -1,10 +1,10 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.IdentityModel.Tokens;
+using System;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Microsoft.IdentityModel.Tokens;
 
 namespace idb.Backend.Middleware
 {
@@ -45,11 +45,10 @@ namespace idb.Backend.Middleware
                     ClockSkew = TimeSpan.Zero
                 }, out SecurityToken validatedToken);
 
-                var jwtToken = (JwtSecurityToken) validatedToken;
-                var userId = jwtToken.Claims.First(x => x.Type == "userId").Value;
+                var jwtToken = (JwtSecurityToken)validatedToken;
 
                 // attach user to context on successful jwt validation
-                context.Items["userId"] = userId;
+                context.Items["userId"] = jwtToken.Claims.First(x => x.Type == "userId").Value;
             }
             catch
             {

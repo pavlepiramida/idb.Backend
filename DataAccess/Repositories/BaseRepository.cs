@@ -14,7 +14,7 @@ namespace idb.Backend.DataAccess.Repositories
         Task Delete(string id);
         Task<int> IncrementValue();
         Task<TEntity> Get(string id);
-        Task<IEnumerable<TEntity>> Get();
+        Task<List<TEntity>> Get();
     }
     public abstract class BaseRepository<TEntity> : IBaseRepository<TEntity> where TEntity : MongoEntity
     {
@@ -50,7 +50,7 @@ namespace idb.Backend.DataAccess.Repositories
             return await results.FirstOrDefaultAsync(); // BIG o o f needs to change but to lazy nau
 
         }
-        public async Task<IEnumerable<TEntity>> Get()
+        public async Task<List<TEntity>> Get()
         {
             var all = await _dbCollection.FindAsync(Builders<TEntity>.Filter.Empty);
             return await all.ToListAsync();

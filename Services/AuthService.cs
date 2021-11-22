@@ -1,8 +1,8 @@
-﻿using System;
+﻿using Microsoft.IdentityModel.Tokens;
+using System;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
-using Microsoft.IdentityModel.Tokens;
 
 namespace idb.Backend.Services
 {
@@ -14,7 +14,7 @@ namespace idb.Backend.Services
             var key = Encoding.ASCII.GetBytes(EnvConsts.JWT_KEY);
             var tokenDescriptor = new SecurityTokenDescriptor
             {
-                Subject = new ClaimsIdentity(new[] {new Claim("userId", userId)}),
+                Subject = new ClaimsIdentity(new[] { new Claim("userId", userId) }),
                 Expires = DateTime.UtcNow.AddMinutes(EnvConsts.JWT_LIFETIME_MINUTES),
                 Issuer = EnvConsts.JWT_ISSUER,
                 Audience = EnvConsts.JWT_AUDIENCE,
