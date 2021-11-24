@@ -8,6 +8,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
+using System;
 
 namespace idb.Backend
 {
@@ -31,6 +32,31 @@ namespace idb.Backend
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "idb.Backend", Version = "v1" });
+                OpenApiSecurityScheme securityDefinition = new()
+                {
+                    Name = "Bearer",
+                    BearerFormat = "JWT",
+                    Scheme = "bearer",
+                    Description = "Specify the authorization token.",
+                    In = ParameterLocation.Header,
+                    Type = SecuritySchemeType.Http,
+                };
+                c.AddSecurityDefinition("jwt_auth", securityDefinition);
+
+                // Make sure swagger UI requires a Bearer token specified
+                OpenApiSecurityScheme securityScheme = new()
+                {
+                    Reference = new OpenApiReference()
+                    {
+                        Id = "jwt_auth",
+                        Type = ReferenceType.SecurityScheme
+                    }
+                };
+                OpenApiSecurityRequirement securityRequirements = new()
+                {
+                    { securityScheme, Array.Empty<string>() },
+                };
+                c.AddSecurityRequirement(securityRequirements);
             });
             // stop being a smol dick CORSSS
             services.AddCors(options =>
