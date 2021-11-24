@@ -27,8 +27,13 @@ namespace idb.Backend.Controllers.v1
             var userId = HttpContext.Items["userId"] as string;
             var user = await _userRepository.Get(userId);
 
-            return new OkObjectResult(new UserResponse(id: user.ID, guid: user.guid, email: user.email,
-                first_name: user.first_name, last_name: user.last_name, joined_at: user.created_at,
+            return new OkObjectResult(new UserResponse(
+                id: user.ID,
+                guid: user.guid,
+                email: user.email,
+                first_name: user.first_name,
+                last_name: user.last_name,
+                joined_at: user.created_at,
                 is_admin: user.is_admin));
         }
     }

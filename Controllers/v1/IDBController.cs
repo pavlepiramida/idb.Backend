@@ -81,7 +81,8 @@ namespace idb.Backend.Controllers.v1
 
             var items = await _itemRepository.GetBy(search, tagIds, user?.guid ?? string.Empty);
 
-            return new OkObjectResult(items.ConvertAll(item => new ItemResponse(id: item.ID,
+            return new OkObjectResult(items.ConvertAll(item => new ItemResponse(
+                    id: item.ID,
                     guid: item.guid,
                     name: item.name,
                     tags: item.tags.ConvertAll(tag => new TagsResponse(tag.ID, tag.name)),
@@ -126,13 +127,13 @@ namespace idb.Backend.Controllers.v1
             item.tags = tags;
             await _itemRepository.Update(item);
             return new OkObjectResult(new ItemResponse(
-                item.ID,
-                item.guid,
-                item.name,
-                item.tags.ConvertAll(x => new TagsResponse(x.ID, x.name)),
-                item.content,
-                item.content_html,
-                item.created_at
+                id: item.ID,
+                guid: item.guid,
+                name: item.name,
+                tags: item.tags.ConvertAll(x => new TagsResponse(x.ID, x.name)),
+                content: item.content,
+                content_html: item.content_html,
+                created_at: item.created_at
             ));
         }
 
