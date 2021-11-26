@@ -19,7 +19,6 @@ namespace idb.Backend.DataAccess.Models
         public string name { get; set; }
         public List<Tag> tags { get; set; }
         public string content { get; set; }
-        public string content_html { get; set; }
         public string ownerId { get; set; }
     }
 

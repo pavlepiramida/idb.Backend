@@ -87,7 +87,7 @@ namespace idb.Backend.Controllers.v1
                     name: item.name,
                     tags: item.tags.ConvertAll(tag => new TagsResponse(tag.ID, tag.name)),
                     content: item.content,
-                    content_html: item.content_html,
+                    content_html: Markdown.ToHtml(item.content, _pipeline),
                     created_at: item.created_at))
 );
         }
@@ -96,7 +96,15 @@ namespace idb.Backend.Controllers.v1
         public async Task<IActionResult> GetItem(string itemId)
         {
             var item = await _itemRepository.Get(itemId);
-            return new OkObjectResult(item);
+            return new OkObjectResult(new ItemResponse(
+                id: item.ID,
+                guid: item.guid,
+                name: item.name,
+                tags: item.tags.ConvertAll(x => new TagsResponse(x.ID, x.name)),
+                content: item.content,
+                content_html: Markdown.ToHtml(item.content, _pipeline),
+                created_at: item.created_at
+            ));
         }
 
         [HttpPost("items")]
@@ -109,8 +117,7 @@ namespace idb.Backend.Controllers.v1
                 tags = itemTags,
                 name = itemPost.name,
                 ownerId = userId,
-                content = itemPost.content,
-                content_html = Markdown.ToHtml(itemPost.content, _pipeline)
+                content = itemPost.content
             };
             await _itemRepository.Create(newItem);
             return new OkObjectResult(newItem);
@@ -123,7 +130,6 @@ namespace idb.Backend.Controllers.v1
             var tags = await _tagRepository.GetByIds(patch.tag_ids);
 
             item.content = patch.content;
-            item.content_html = Markdown.ToHtml(patch.content, _pipeline);
             item.tags = tags;
             await _itemRepository.Update(item);
             return new OkObjectResult(new ItemResponse(
@@ -132,7 +138,7 @@ namespace idb.Backend.Controllers.v1
                 name: item.name,
                 tags: item.tags.ConvertAll(x => new TagsResponse(x.ID, x.name)),
                 content: item.content,
-                content_html: item.content_html,
+                content_html: Markdown.ToHtml(item.content, _pipeline),
                 created_at: item.created_at
             ));
         }
