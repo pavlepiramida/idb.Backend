@@ -18,10 +18,10 @@ namespace idb.Backend.DataAccess.Repositories
     }
     public abstract class BaseRepository<TEntity> : IBaseRepository<TEntity> where TEntity : MongoEntity
     {
-        protected readonly idbContext _mongoContext;
+        protected readonly IdbContext _mongoContext;
         protected IMongoCollection<TEntity> _dbCollection;
 
-        protected BaseRepository(idbContext context)
+        protected BaseRepository(IdbContext context)
         {
             _mongoContext = context;
             _dbCollection = _mongoContext.GetCollection<TEntity>(typeof(TEntity).Name);

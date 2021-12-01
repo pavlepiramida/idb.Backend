@@ -2,7 +2,6 @@
 using idb.Backend.Requests.v1;
 using idb.Backend.Services;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 using System.Threading.Tasks;
 
 namespace idb.Backend.Controllers.v1
@@ -11,13 +10,11 @@ namespace idb.Backend.Controllers.v1
     [ApiController]
     public class AuthController : ControllerBase
     {
-        private ILogger<AuthController> _logger;
-        private AuthService _authService;
+        private readonly AuthService _authService;
         private readonly IUserRepository _userRepository;
 
-        public AuthController(ILogger<AuthController> logger, AuthService authService, IUserRepository userRepository)
+        public AuthController(AuthService authService, IUserRepository userRepository)
         {
-            _logger = logger;
             _authService = authService;
             _userRepository = userRepository;
         }

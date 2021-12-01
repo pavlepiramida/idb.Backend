@@ -27,7 +27,7 @@ namespace idb.Backend.Middleware
             await _next(context);
         }
 
-        private void AttachUserToContext(HttpContext context, string token)
+        private static void AttachUserToContext(HttpContext context, string token)
         {
             try
             {

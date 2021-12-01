@@ -2,7 +2,6 @@
 using idb.Backend.DataAccess.Repositories;
 using idb.Backend.Requests.v1;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 using System.Threading.Tasks;
 
 namespace idb.Backend.Controllers.v1
@@ -11,12 +10,10 @@ namespace idb.Backend.Controllers.v1
     [ApiController]
     public class ProfileController : ControllerBase
     {
-        private ILogger<ProfileController> _logger;
         private readonly IUserRepository _userRepository;
 
-        public ProfileController(ILogger<ProfileController> logger, IUserRepository userRepository)
+        public ProfileController(IUserRepository userRepository)
         {
-            _logger = logger;
             _userRepository = userRepository;
         }
 

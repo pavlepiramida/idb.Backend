@@ -25,7 +25,7 @@ namespace idb.Backend
         {
             services.AddControllers();
             services.AddSingleton(new AuthService());
-            services.AddSingleton(new idbContext(EnvConsts.DATABASE_CONNECTION, EnvConsts.DATABASE));
+            services.AddSingleton(new IdbContext(EnvConsts.DATABASE_CONNECTION, EnvConsts.DATABASE));
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<IItemRepository, ItemRepository>();
             services.AddScoped<ITagRepository, TagRepository>();

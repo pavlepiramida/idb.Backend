@@ -23,7 +23,7 @@ namespace idb.Backend.DataAccess.Repositories
 
     public class UserRepository : BaseRepository<User>, IUserRepository
     {
-        public UserRepository(idbContext context) : base(context) { }
+        public UserRepository(IdbContext context) : base(context) { }
 
         public async Task<User> GetByEmail(string email)
         {
@@ -42,7 +42,7 @@ namespace idb.Backend.DataAccess.Repositories
 
     public class ItemRepository : BaseRepository<Item>, IItemRepository
     {
-        public ItemRepository(idbContext context) : base(context) { }
+        public ItemRepository(IdbContext context) : base(context) { }
 
         public async Task<List<Item>> GetBy(string search, List<int> tag_ids, string userId)
         {
@@ -64,7 +64,7 @@ namespace idb.Backend.DataAccess.Repositories
 
     public class TagRepository : BaseRepository<Models.Tag>, ITagRepository
     {
-        public TagRepository(idbContext context) : base(context) { }
+        public TagRepository(IdbContext context) : base(context) { }
 
         public async Task<Models.Tag> GetById(int tagId)
         {

@@ -5,7 +5,6 @@ using idb.Backend.Requests.v1;
 using Markdig;
 using Markdig.SyntaxHighlighting.Core;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -15,18 +14,15 @@ namespace idb.Backend.Controllers.v1
     [Authorize]
     [Route("api/v1/[controller]")]
     [ApiController]
-    public class IDBController : ControllerBase
+    public class IdbController : ControllerBase
     {
-        private readonly ILogger<IDBController> _logger;
         private readonly MarkdownPipeline _pipeline;
         private readonly IUserRepository _userRepository;
         private readonly ITagRepository _tagRepository;
         private readonly IItemRepository _itemRepository;
 
-        public IDBController(ILogger<IDBController> logger, IUserRepository userRepository,
-            ITagRepository tagRepository, IItemRepository itemRepository)
+        public IdbController(IUserRepository userRepository, ITagRepository tagRepository, IItemRepository itemRepository)
         {
-            _logger = logger;
             _pipeline = new MarkdownPipelineBuilder()
                 .UseAdvancedExtensions()
                 .UseSyntaxHighlighting()
@@ -60,7 +56,7 @@ namespace idb.Backend.Controllers.v1
         }
 
         [HttpPost("tags/{tag}")]
-        public async Task<IActionResult> CreateTag([FromRoute] string tag)
+        public async Task<IActionResult> PostTag([FromRoute] string tag)
         {
             await _tagRepository.Create(new Tag { name = tag });
             return new OkResult();
@@ -108,7 +104,7 @@ namespace idb.Backend.Controllers.v1
         }
 
         [HttpPost("items")]
-        public async Task<IActionResult> GetItems([FromBody] ItemPostRequest itemPost)
+        public async Task<IActionResult> PostItems([FromBody] ItemPostRequest itemPost)
         {
             var userId = HttpContext.Items["userId"] as string;
             var itemTags = await _tagRepository.GetByIds(itemPost.tag_ids);
