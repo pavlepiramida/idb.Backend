@@ -1,7 +1,9 @@
 using idb.Backend.DataAccess;
 using idb.Backend.DataAccess.Repositories;
-using idb.Backend.Middleware;
+using idb.Backend.Middlewares;
+using idb.Backend.Providers;
 using idb.Backend.Services;
+using idb.Backend.Validators;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -23,12 +25,20 @@ namespace idb.Backend
 
         public void ConfigureServices(IServiceCollection services)
         {
+            var enviormentProvider = new EnvironmentProvider();
             services.AddControllers();
-            services.AddSingleton(new AuthService());
-            services.AddSingleton(new IdbContext(EnvConsts.DATABASE_CONNECTION, EnvConsts.DATABASE));
+
+            services.AddSingleton<IJwtTokenValidator, TokenValidator>();
+            services.AddSingleton<IAuthJwtService, AuthService>();
+            services.AddSingleton(new IdbContext(enviormentProvider.DatabaseConnection,
+                enviormentProvider.Database));
+            services.AddSingleton<IDateTimeProvider, DateTimeProvider>();
+            services.AddSingleton<IJwtEnvironmentProvider>(enviormentProvider);
+            services.AddSingleton<IDatabaseEnvironmentProvider>(enviormentProvider);
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<IItemRepository, ItemRepository>();
             services.AddScoped<ITagRepository, TagRepository>();
+
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "idb.Backend", Version = "v1" });

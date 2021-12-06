@@ -10,10 +10,10 @@ namespace idb.Backend.Controllers.v1
     [ApiController]
     public class AuthController : ControllerBase
     {
-        private readonly AuthService _authService;
+        private readonly IAuthJwtService _authService;
         private readonly IUserRepository _userRepository;
 
-        public AuthController(AuthService authService, IUserRepository userRepository)
+        public AuthController(IAuthJwtService authService, IUserRepository userRepository)
         {
             _authService = authService;
             _userRepository = userRepository;
@@ -31,7 +31,7 @@ namespace idb.Backend.Controllers.v1
 
             var token = _authService.GenerateJwt(user.guid);
 
-            return new OkObjectResult(new { token });
+            return new OkObjectResult(new TokenResponse(token));
         }
     }
 }
