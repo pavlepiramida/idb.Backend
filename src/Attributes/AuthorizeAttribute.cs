@@ -10,7 +10,7 @@ namespace idb.Backend.Attributes
     {
         public void OnAuthorization(AuthorizationFilterContext context)
         {
-            var userId = (string)context.HttpContext.Items["userId"];
+            context.HttpContext.Items.TryGetValue("userId",out var userId);
             if (userId == null)
                 context.Result = new JsonResult(new { message = "Unauthorized" }) { StatusCode = StatusCodes.Status401Unauthorized };
         }

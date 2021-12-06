@@ -16,4 +16,6 @@ namespace idb.Backend.Requests.v1
 
     public record UserResponse(int id, string guid, string email, string first_name, string last_name,
         DateTime joined_at, bool is_admin);
+
+    public record TokenResponse(string token);
 }

@@ -1,7 +1,7 @@
 ﻿using idb.Backend.DataAccess.Models;
+using idb.Backend.Providers;
 using MongoDB.Bson;
 using MongoDB.Driver;
-using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -20,15 +20,21 @@ namespace idb.Backend.DataAccess.Repositories
     {
         protected readonly IdbContext _mongoContext;
         protected IMongoCollection<TEntity> _dbCollection;
+        private protected IDateTimeProvider _dateTimeProvider;
 
-        protected BaseRepository(IdbContext context)
+        protected BaseRepository(IdbContext context, IDateTimeProvider dateTimeProvider)
         {
             _mongoContext = context;
             _dbCollection = _mongoContext.GetCollection<TEntity>(typeof(TEntity).Name);
+            _dateTimeProvider = dateTimeProvider;
+        }
+        public BaseRepository()
+        {
+
         }
         public async Task Create(TEntity obj)
         {
-            var timestamp = DateTime.UtcNow; // lel like Im ever gonna test this
+            var timestamp = _dateTimeProvider.UtcNow; // lel like Im ever gonna test this
             obj.created_at = timestamp;
             obj.timestamp = timestamp;
             obj.ID = await IncrementValue();
@@ -65,7 +71,7 @@ namespace idb.Backend.DataAccess.Repositories
 
         public async Task Update(TEntity obj)
         {
-            obj.timestamp = DateTime.UtcNow;
+            obj.timestamp = _dateTimeProvider.UtcNow;
             var objectId = new ObjectId(obj.guid);
             await _dbCollection.ReplaceOneAsync(Builders<TEntity>.Filter.Eq("_id", objectId), obj);
         }
