@@ -28,10 +28,7 @@ namespace idb.Backend.DataAccess.Repositories
             _dbCollection = _mongoContext.GetCollection<TEntity>(typeof(TEntity).Name);
             _dateTimeProvider = dateTimeProvider;
         }
-        public BaseRepository()
-        {
-
-        }
+        protected BaseRepository() { }
         public async Task Create(TEntity obj)
         {
             var timestamp = _dateTimeProvider.UtcNow; // lel like Im ever gonna test this
