@@ -51,8 +51,7 @@ namespace idb.Backend.Controllers.v1
         public async Task<IActionResult> GetTags()
         {
             var tags = await _tagRepository.Get();
-            var tagsDTO = tags.ConvertAll(tag => new TagsResponse(id: tag.ID, name: tag.name));
-            return new OkObjectResult(tagsDTO);
+            return new OkObjectResult(tags.ConvertAll(tag => new TagsResponse(id: tag.ID, name: tag.name)));
         }
 
         [HttpPost("tags/{tag}")]
@@ -77,30 +76,30 @@ namespace idb.Backend.Controllers.v1
 
             var items = await _itemRepository.GetBy(search, tagIds, user?.guid ?? string.Empty);
 
-            return new OkObjectResult(items.ConvertAll(item => new ItemResponse(
-                    id: item.ID,
-                    guid: item.guid,
-                    name: item.name,
-                    tags: item.tags.ConvertAll(tag => new TagsResponse(tag.ID, tag.name)),
-                    content: item.content,
-                    content_html: Markdown.ToHtml(item.content, _pipeline),
-                    created_at: item.created_at))
-);
+            return items is null ? new NotFoundResult() : new OkObjectResult(items.ConvertAll(item =>
+            new ItemResponse(
+                id: item.ID,
+                guid: item.guid,
+                name: item.name,
+                tags: item.tags.ConvertAll(tag => new TagsResponse(tag.ID, tag.name)),
+                content: item.content,
+                content_html: Markdown.ToHtml(item.content, _pipeline),
+                created_at: item.created_at)));
         }
 
         [HttpGet("items/{itemId}")]
         public async Task<IActionResult> GetItem(string itemId)
         {
             var item = await _itemRepository.Get(itemId);
-            return new OkObjectResult(new ItemResponse(
-                id: item.ID,
-                guid: item.guid,
-                name: item.name,
-                tags: item.tags.ConvertAll(x => new TagsResponse(x.ID, x.name)),
-                content: item.content,
-                content_html: Markdown.ToHtml(item.content, _pipeline),
-                created_at: item.created_at
-            ));
+            return item is null ? new NotFoundResult() :
+                new OkObjectResult(new ItemResponse(
+                    id: item.ID,
+                    guid: item.guid,
+                    name: item.name,
+                    tags: item.tags.ConvertAll(x => new TagsResponse(x.ID, x.name)),
+                    content: item.content,
+                    content_html: Markdown.ToHtml(item.content, _pipeline),
+                    created_at: item.created_at));
         }
 
         [HttpPost("items")]
