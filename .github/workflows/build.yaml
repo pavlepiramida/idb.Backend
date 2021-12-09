@@ -52,5 +52,5 @@ jobs:
                   dotnet clean
                   dotnet build
                   dotnet test --no-build --collect:"XPlat Code Coverage"
-                  reportgenerator -reports:..\tests\TestResults\*\coverage.cobertura.xml -targetdir:sonarqubecoverage -reporttypes:SonarQube
+                  reportgenerator -reports:..\tests\TestResults\*\coverage.cobertura.xml -targetdir:sonarqubecoverage -reporttypes:Cobertura
                   ..\.sonar\scanner\dotnet-sonarscanner end /d:sonar.login="${{ secrets.SONAR_TOKEN }}"
