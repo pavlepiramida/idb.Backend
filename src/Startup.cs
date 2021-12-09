@@ -10,10 +10,13 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
+using MongoDB.Driver;
 using System;
+using System.Diagnostics.CodeAnalysis;
 
 namespace idb.Backend
 {
+    [ExcludeFromCodeCoverage]
     public class Startup
     {
         public Startup(IConfiguration configuration)
@@ -30,14 +33,17 @@ namespace idb.Backend
 
             services.AddSingleton<IJwtTokenValidator, TokenValidator>();
             services.AddSingleton<IAuthJwtService, AuthService>();
-            services.AddSingleton(new IdbContext(enviormentProvider.DatabaseConnection,
-                enviormentProvider.Database));
+            services.AddSingleton<IdbContext>();
             services.AddSingleton<IDateTimeProvider, DateTimeProvider>();
             services.AddSingleton<IJwtEnvironmentProvider>(enviormentProvider);
             services.AddSingleton<IDatabaseEnvironmentProvider>(enviormentProvider);
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<IItemRepository, ItemRepository>();
             services.AddScoped<ITagRepository, TagRepository>();
+            services.AddSingleton<IMongoClient>(x=>{
+               var conn = x.GetService<IDatabaseEnvironmentProvider>().DatabaseConnection;
+                return new MongoClient(conn);
+            });
 
             services.AddSwaggerGen(c =>
             {
