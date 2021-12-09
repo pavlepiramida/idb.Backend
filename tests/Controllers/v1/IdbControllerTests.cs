@@ -114,6 +114,26 @@ namespace idb.Backend.Tests.Controllers.v1
             Assert.AreEqual(item.guid, responseBody?[0].guid);
             Assert.AreEqual(item.ID, responseBody?[0].id);
             Assert.AreEqual(item.content, responseBody?[0].content);
+            Assert.AreEqual(item.tags.Count, responseBody?[0].tags.Count);
+        }
+
+        [Test]
+        public async Task GetItems_should_return_200_OK_with_out_items()
+        {
+            var mockItemRepository = new Mock<IItemRepository>();
+            mockItemRepository.Setup(x => x.GetBy(It.IsAny<string>(),
+                It.IsAny<List<int>>(),
+                It.IsAny<string>()))
+                .ReturnsAsync((List<Item>)null);
+            var mockTagsRepository = new Mock<ITagRepository>();
+            var mockUserRepository = new Mock<IUserRepository>();
+            var controller = new IdbController(mockUserRepository.Object, mockTagsRepository.Object, mockItemRepository.Object);
+
+            var response = await controller.GetItems("searchTerm", "1", 1);
+            var okObject = (NotFoundResult)response;
+            var statusCode = okObject.StatusCode;
+
+            Assert.AreEqual(404, statusCode);
         }
 
         [Test]
@@ -143,6 +163,24 @@ namespace idb.Backend.Tests.Controllers.v1
             Assert.AreEqual(item.guid, responseBody?.guid);
             Assert.AreEqual(item.ID, responseBody?.id);
             Assert.AreEqual(item.content, responseBody?.content);
+            Assert.AreEqual(item.tags.Count, responseBody?.tags?.Count);
+            Assert.AreEqual(item.created_at, responseBody?.created_at);
+            Assert.AreEqual(item.name, responseBody?.name);
+        }
+        [TestCase]
+        public async Task GetItem_should_return_200_OK_with_out_item()
+        {
+            var mockItemRepository = new Mock<IItemRepository>();
+            mockItemRepository.Setup(x => x.Get(It.IsAny<string>())).ReturnsAsync((Item)null);
+            var mockTagsRepository = new Mock<ITagRepository>();
+            var mockUserRepository = new Mock<IUserRepository>();
+            var controller = new IdbController(mockUserRepository.Object, mockTagsRepository.Object, mockItemRepository.Object);
+
+            var response = await controller.GetItem("long_ass_guid");
+            var okObject = (NotFoundResult)response;
+            var statusCode = okObject.StatusCode;
+
+            Assert.AreEqual(404, statusCode);
         }
 
         [Test]
