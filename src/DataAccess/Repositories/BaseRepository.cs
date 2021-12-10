@@ -9,8 +9,8 @@ namespace idb.Backend.DataAccess.Repositories
 {
     public interface IBaseRepository<TEntity> where TEntity : MongoEntity
     {
-        Task Create(TEntity obj);
-        Task Update(TEntity obj);
+        Task<TEntity> Create(TEntity obj);
+        Task<TEntity> Update(TEntity obj);
         Task Delete(string id);
         Task<int> IncrementValue();
         Task<TEntity> Get(string id);
@@ -29,13 +29,14 @@ namespace idb.Backend.DataAccess.Repositories
             _dateTimeProvider = dateTimeProvider;
         }
         protected BaseRepository() { }
-        public async Task Create(TEntity obj)
+        public async Task<TEntity> Create(TEntity obj)
         {
             var timestamp = _dateTimeProvider.UtcNow; // lel like Im ever gonna test this
             obj.created_at = timestamp;
             obj.timestamp = timestamp;
             obj.ID = await IncrementValue();
             await _dbCollection.InsertOneAsync(obj);
+            return obj;
         }
 
         public async Task Delete(string id)
@@ -66,11 +67,12 @@ namespace idb.Backend.DataAccess.Repositories
             return maxdoc is not null ? 1 + maxdoc.ID : 1;
         }
 
-        public async Task Update(TEntity obj)
+        public async Task<TEntity> Update(TEntity obj)
         {
             obj.timestamp = _dateTimeProvider.UtcNow;
             var objectId = new ObjectId(obj.guid);
             await _dbCollection.ReplaceOneAsync(Builders<TEntity>.Filter.Eq("_id", objectId), obj);
+            return obj;
         }
     }
 }
