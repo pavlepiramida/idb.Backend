@@ -197,9 +197,18 @@ namespace idb.Backend.Tests.Controllers.v1
                 ID = 1,
                 name = "test"
             };
+            var createdItem = new Item
+            {
+                content = "**Test**",
+                name = "Test",
+                ownerId = Guid.NewGuid().ToString("N"),
+                tags = new List<Tag> { tag },
+                guid = Guid.NewGuid().ToString("N"),
+                created_at = DateTime.Now
+            };
             var userId = Guid.NewGuid().ToString("N");
             var mockItemRepository = new Mock<IItemRepository>();
-            mockItemRepository.Setup(x => x.Create(It.IsAny<Item>())).Verifiable();
+            mockItemRepository.Setup(x => x.Create(It.IsAny<Item>())).ReturnsAsync(createdItem);
             var mockTagsRepository = new Mock<ITagRepository>();
             mockTagsRepository.Setup(x => x.GetByIds(It.IsAny<List<int>>())).ReturnsAsync(new List<Tag> { tag });
             var mockUserRepository = new Mock<IUserRepository>();
@@ -213,11 +222,11 @@ namespace idb.Backend.Tests.Controllers.v1
             var responseBody = okObject.Value as Item;
 
             Assert.AreEqual(200, statusCode);
-            Assert.AreEqual(itemRequest.name, responseBody?.name);
-            Assert.AreEqual(itemRequest.content, responseBody?.content);
-            Assert.AreEqual(itemRequest.tag_ids[0], responseBody?.tags[0].ID);
+            Assert.AreEqual(createdItem.name, responseBody?.name);
+            Assert.AreEqual(createdItem.content, responseBody?.content);
+            Assert.AreEqual(createdItem.tags[0].ID, responseBody?.tags[0].ID);
             Assert.AreEqual(tag.name, responseBody?.tags[0].name);
-            Assert.AreEqual(userId, responseBody?.ownerId);
+            Assert.AreEqual(createdItem.ownerId, responseBody?.ownerId);
             mockItemRepository.Verify();
         }
 
@@ -249,7 +258,7 @@ namespace idb.Backend.Tests.Controllers.v1
 
             var mockItemRepository = new Mock<IItemRepository>();
             mockItemRepository.Setup(x => x.Get(It.IsAny<string>())).ReturnsAsync(item);
-            mockItemRepository.Setup(x => x.Update(It.IsAny<Item>())).Verifiable();
+            mockItemRepository.Setup(x => x.Update(It.IsAny<Item>())).ReturnsAsync(item);
             var mockTagsRepository = new Mock<ITagRepository>();
             mockTagsRepository.Setup(x => x.GetByIds(It.IsAny<List<int>>())).ReturnsAsync(new List<Tag> { tag });
             var mockUserRepository = new Mock<IUserRepository>();
@@ -265,7 +274,6 @@ namespace idb.Backend.Tests.Controllers.v1
             Assert.AreEqual(item.content, responseBody?.content);
             Assert.AreEqual(tag.ID, responseBody?.tags[0].id);
             Assert.AreEqual(tag.name, responseBody?.tags[0].name);
-            mockItemRepository.Verify();
         }
 
         [Test]
