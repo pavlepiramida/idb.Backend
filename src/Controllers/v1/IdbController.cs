@@ -114,8 +114,8 @@ namespace idb.Backend.Controllers.v1
                 ownerId = userId,
                 content = itemPost.content
             };
-            await _itemRepository.Create(newItem);
-            return new OkObjectResult(newItem);
+            var createdItem = await _itemRepository.Create(newItem);
+            return new OkObjectResult(createdItem);
         }
 
         [HttpPatch("items/{itemId}")]
@@ -126,15 +126,15 @@ namespace idb.Backend.Controllers.v1
 
             item.content = patch.content;
             item.tags = tags;
-            await _itemRepository.Update(item);
+            var updatedItem = await _itemRepository.Update(item);
             return new OkObjectResult(new ItemResponse(
-                id: item.ID,
-                guid: item.guid,
-                name: item.name,
-                tags: item.tags.ConvertAll(x => new TagsResponse(x.ID, x.name)),
-                content: item.content,
-                content_html: Markdown.ToHtml(item.content, _pipeline),
-                created_at: item.created_at
+                id: updatedItem.ID,
+                guid: updatedItem.guid,
+                name: updatedItem.name,
+                tags: updatedItem.tags.ConvertAll(x => new TagsResponse(x.ID, x.name)),
+                content: updatedItem.content,
+                content_html: Markdown.ToHtml(updatedItem.content, _pipeline),
+                created_at: updatedItem.created_at
             ));
         }
 
