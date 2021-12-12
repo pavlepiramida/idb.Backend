@@ -2,7 +2,7 @@
 
 namespace idb.Backend.Providers
 {
-    public class EnvironmentProvider : IJwtEnvironmentProvider, IDatabaseEnvironmentProvider
+    public class EnvironmentProvider : IJwtEnvironmentProvider, IDatabaseEnvironmentProvider, ISentryEnviormentProvider
     {
         public string JwtKey => Environment.GetEnvironmentVariable(nameof(JwtKey))
             ?? throw new Exception($"Missing {nameof(JwtKey)} environment variable");
@@ -25,6 +25,11 @@ namespace idb.Backend.Providers
         public string Database => Environment.GetEnvironmentVariable(nameof(Database))
             ?? throw new Exception($"Missing {nameof(Database)} environment variable");
 
+        public string SentryDns => Environment.GetEnvironmentVariable(nameof(SentryDns)) ?? string.Empty;
+
+        public double SentryTraceSampleRate => double.Parse(Environment.GetEnvironmentVariable(nameof(SentryTraceSampleRate)) ?? "1.0");
+
+        public bool SentryIntegration => !string.IsNullOrEmpty(SentryDns);
     }
 
 
@@ -40,5 +45,12 @@ namespace idb.Backend.Providers
     {
         string DatabaseConnection { get; }
         string Database { get; }
+    }
+
+    public interface ISentryEnviormentProvider
+    {
+        string SentryDns { get; }
+        double SentryTraceSampleRate { get; }
+        bool SentryIntegration { get; }
     }
 }

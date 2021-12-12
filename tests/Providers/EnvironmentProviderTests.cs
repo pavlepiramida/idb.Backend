@@ -26,6 +26,24 @@ namespace idb.Backend.Tests.Providers
         }
 
         [Test]
+        public void Provider_should_get_optional_if_env_is_set()
+        {
+            var env = SetupEnviormentalVariables();
+
+            Assert.AreEqual(env[nameof(_provider.SentryDns)], _provider.SentryDns);
+            Assert.AreEqual(double.Parse(env[nameof(_provider.SentryTraceSampleRate)]), _provider.SentryTraceSampleRate);
+            Assert.AreEqual(true, _provider.SentryIntegration);
+        }
+
+        [Test]
+        public void Provider_should_set_optional_to_default_if_env_is_not_set()
+        {
+            Assert.AreEqual(string.Empty, _provider.SentryDns);
+            Assert.AreEqual(1.0, _provider.SentryTraceSampleRate);
+            Assert.AreEqual(false, _provider.SentryIntegration);
+        }
+
+        [Test]
         public void Provider_should_get_set_variable()
         {
             var env=SetupEnviormentalVariables();
@@ -48,6 +66,8 @@ namespace idb.Backend.Tests.Providers
             Environment.SetEnvironmentVariable(nameof(_provider.JwtAudience),null);
             Environment.SetEnvironmentVariable(nameof(_provider.Database), null);
             Environment.SetEnvironmentVariable(nameof(_provider.DatabaseConnection), null);
+            Environment.SetEnvironmentVariable(nameof(_provider.SentryDns),null);
+            Environment.SetEnvironmentVariable(nameof(_provider.SentryTraceSampleRate), null);
         }
         private Dictionary<string, string> SetupEnviormentalVariables()
         {
@@ -59,6 +79,9 @@ namespace idb.Backend.Tests.Providers
             Environment.SetEnvironmentVariable(nameof(_provider.JwtAudience), nameof(_provider.JwtAudience));
             Environment.SetEnvironmentVariable(nameof(_provider.Database), nameof(_provider.Database));
             Environment.SetEnvironmentVariable(nameof(_provider.DatabaseConnection), nameof(_provider.DatabaseConnection));
+            Environment.SetEnvironmentVariable(nameof(_provider.SentryDns), nameof(_provider.SentryDns));
+            Environment.SetEnvironmentVariable(nameof(_provider.SentryTraceSampleRate), "0.5");
+
 
             env.Add(nameof(_provider.JwtLifeTimeMinutes), nameof(_provider.JwtLifeTimeMinutes));
             env.Add(nameof(_provider.JwtValidateLifeTime), nameof(_provider.JwtValidateLifeTime));
@@ -67,6 +90,9 @@ namespace idb.Backend.Tests.Providers
             env.Add(nameof(_provider.JwtAudience), nameof(_provider.JwtAudience));
             env.Add(nameof(_provider.Database), nameof(_provider.Database));
             env.Add(nameof(_provider.DatabaseConnection), nameof(_provider.DatabaseConnection));
+            env.Add(nameof(_provider.SentryDns), nameof(_provider.SentryDns));
+            env.Add(nameof(_provider.SentryTraceSampleRate), "0.5");
+
             return env;
         }
     }
