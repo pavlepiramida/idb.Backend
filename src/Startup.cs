@@ -37,6 +37,7 @@ namespace idb.Backend
             services.AddSingleton<IDateTimeProvider, DateTimeProvider>();
             services.AddSingleton<IJwtEnvironmentProvider>(enviormentProvider);
             services.AddSingleton<IDatabaseEnvironmentProvider>(enviormentProvider);
+            services.AddSingleton<ISentryEnviormentProvider>(enviormentProvider);
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<IItemRepository, ItemRepository>();
             services.AddScoped<ITagRepository, TagRepository>();
@@ -44,6 +45,8 @@ namespace idb.Backend
                var conn = x.GetService<IDatabaseEnvironmentProvider>().DatabaseConnection;
                 return new MongoClient(conn);
             });
+
+            services.AddSentry();
 
             services.AddSwaggerGen(c =>
             {
@@ -97,6 +100,8 @@ namespace idb.Backend
             }
 
             app.UseCors();
+
+            app.UseSentryTracing();
 
             app.UseRouting();
 
