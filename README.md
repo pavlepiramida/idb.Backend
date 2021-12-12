@@ -1,5 +1,9 @@
 # Backend for idb
 
+[![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=pavlepiramida_idb.Backend&metric=sqale_rating)](https://sonarcloud.io/summary/new_code?id=pavlepiramida_idb.Backend)
+[![Code Smells](https://sonarcloud.io/api/project_badges/measure?project=pavlepiramida_idb.Backend&metric=code_smells)](https://sonarcloud.io/summary/new_code?id=pavlepiramida_idb.Backend)
+[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=pavlepiramida_idb.Backend&metric=coverage)](https://sonarcloud.io/summary/new_code?id=pavlepiramida_idb.Backend)
+
 Home of backend implementation for [idb](https://github.com/vladgr/idb).  
 Implemented as ASP.Net Web API, using MongoDB as database engine.  
 Aims to make the backend easily deployable for personal/teamwork usage.
@@ -36,7 +40,6 @@ so I decided to create a backend and make it Heroku friendly (keep it cheap as d
 ### TODO
 
 -   Image storage
--   Unit tests (lel)
 -   docker-compose for local usage
 -   Documenting process of hosting and deployment to Heroku
     -   MongoDB Atlas creation and setup
