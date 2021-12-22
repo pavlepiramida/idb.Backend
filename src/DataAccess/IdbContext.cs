@@ -12,7 +12,7 @@ namespace idb.Backend.DataAccess
         private IMongoDatabase _db { get; set; }
         private IMongoClient _mongoClient { get; set; }
 
-        public IdbContext(IMongoClient mongoClient,IDatabaseEnvironmentProvider dbEnvProvider)
+        public IdbContext(IMongoClient mongoClient, IDatabaseEnvironmentProvider dbEnvProvider)
         {
             _mongoClient = mongoClient;
             _db = _mongoClient.GetDatabase(dbEnvProvider.Database);

@@ -16,14 +16,16 @@ namespace idb.Backend.Tests.Controllers.v1
         public async Task Should_return_user()
         {
             var userRepositoryMock = new Mock<IUserRepository>();
-            var expectedUser = new User {
+            var expectedUser = new User
+            {
                 ID = 1,
                 guid = "guid",
                 email = "pavle",
                 first_name = "pavle",
                 last_name = "pavle",
                 created_at = DateTime.Now,
-                is_admin = true };
+                is_admin = true
+            };
             userRepositoryMock.Setup(x => x.Get(It.IsAny<string>())).ReturnsAsync(expectedUser);
             var controller = new ProfileController(userRepositoryMock.Object)
             {
@@ -37,7 +39,7 @@ namespace idb.Backend.Tests.Controllers.v1
             var resultDto = result.Value as UserResponse;
 
             Assert.IsNotNull(resultDto);
-            Assert.AreEqual(expectedUser.ID,resultDto?.id);
+            Assert.AreEqual(expectedUser.ID, resultDto?.id);
             Assert.AreEqual(expectedUser.email, resultDto?.email);
             Assert.AreEqual(expectedUser.guid, resultDto?.guid);
             Assert.AreEqual(expectedUser.is_admin, resultDto?.is_admin);

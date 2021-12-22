@@ -46,7 +46,7 @@ namespace idb.Backend.Tests.Providers
         [Test]
         public void Provider_should_get_set_variable()
         {
-            var env=SetupEnviormentalVariables();
+            var env = SetupEnviormentalVariables();
 
             Assert.AreEqual(1, _provider.JwtLifeTimeMinutes);
             Assert.IsTrue(_provider.JwtValidateLifeTime);
@@ -59,20 +59,20 @@ namespace idb.Backend.Tests.Providers
         [TearDown]
         public void RemoveEnvVariables()
         {
-            Environment.SetEnvironmentVariable(nameof(_provider.JwtLifeTimeMinutes),null);
-            Environment.SetEnvironmentVariable(nameof(_provider.JwtValidateLifeTime),null);
-            Environment.SetEnvironmentVariable(nameof(_provider.JwtKey),null);
+            Environment.SetEnvironmentVariable(nameof(_provider.JwtLifeTimeMinutes), null);
+            Environment.SetEnvironmentVariable(nameof(_provider.JwtValidateLifeTime), null);
+            Environment.SetEnvironmentVariable(nameof(_provider.JwtKey), null);
             Environment.SetEnvironmentVariable(nameof(_provider.JwtIssuer), null);
-            Environment.SetEnvironmentVariable(nameof(_provider.JwtAudience),null);
+            Environment.SetEnvironmentVariable(nameof(_provider.JwtAudience), null);
             Environment.SetEnvironmentVariable(nameof(_provider.Database), null);
             Environment.SetEnvironmentVariable(nameof(_provider.DatabaseConnection), null);
-            Environment.SetEnvironmentVariable(nameof(_provider.SentryDns),null);
+            Environment.SetEnvironmentVariable(nameof(_provider.SentryDns), null);
             Environment.SetEnvironmentVariable(nameof(_provider.SentryTraceSampleRate), null);
         }
         private Dictionary<string, string> SetupEnviormentalVariables()
         {
             var env = new Dictionary<string, string>();
-            Environment.SetEnvironmentVariable(nameof(_provider.JwtLifeTimeMinutes),"1");
+            Environment.SetEnvironmentVariable(nameof(_provider.JwtLifeTimeMinutes), "1");
             Environment.SetEnvironmentVariable(nameof(_provider.JwtValidateLifeTime), "true");
             Environment.SetEnvironmentVariable(nameof(_provider.JwtKey), nameof(_provider.JwtKey));
             Environment.SetEnvironmentVariable(nameof(_provider.JwtIssuer), nameof(_provider.JwtIssuer));

@@ -19,8 +19,9 @@ namespace idb.Backend
                 {
                     ISentryEnviormentProvider sentryEnv = new EnvironmentProvider();
                     webBuilder.UseStartup<Startup>();
-                    if(sentryEnv.SentryIntegration)
-                        webBuilder.UseSentry(sentry => {
+                    if (sentryEnv.SentryIntegration)
+                        webBuilder.UseSentry(sentry =>
+                        {
                             sentry.Dsn = sentryEnv.SentryDns;
                             sentry.TracesSampleRate = sentryEnv.SentryTraceSampleRate;
                         });

@@ -41,8 +41,9 @@ namespace idb.Backend
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<IItemRepository, ItemRepository>();
             services.AddScoped<ITagRepository, TagRepository>();
-            services.AddSingleton<IMongoClient>(x=>{
-               var conn = x.GetService<IDatabaseEnvironmentProvider>().DatabaseConnection;
+            services.AddSingleton<IMongoClient>(x =>
+            {
+                var conn = x.GetService<IDatabaseEnvironmentProvider>().DatabaseConnection;
                 return new MongoClient(conn);
             });
 
