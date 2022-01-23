@@ -20,7 +20,7 @@ namespace idb.Backend.DataAccess.Repositories
     {
         protected readonly IdbContext _mongoContext;
         protected IMongoCollection<TEntity> _dbCollection;
-        private protected IDateTimeProvider _dateTimeProvider;
+        protected IDateTimeProvider _dateTimeProvider;
 
         protected BaseRepository(IdbContext context, IDateTimeProvider dateTimeProvider)
         {
@@ -51,7 +51,7 @@ namespace idb.Backend.DataAccess.Repositories
 
             FilterDefinition<TEntity> filter = Builders<TEntity>.Filter.Eq("_id", objectId);
             var results = await _dbCollection.FindAsync(filter);
-            return await results.FirstOrDefaultAsync(); // BIG o o f needs to change but to lazy nau
+            return await results.FirstOrDefaultAsync();
 
         }
         public async Task<List<TEntity>> Get()

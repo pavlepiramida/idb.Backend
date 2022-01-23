@@ -2,7 +2,7 @@
 
 namespace idb.Backend.Providers
 {
-    public class EnvironmentProvider : IJwtEnvironmentProvider, IDatabaseEnvironmentProvider, ISentryEnviormentProvider
+    public class EnvironmentProvider : IJwtEnvironmentProvider, IDatabaseEnvironmentProvider, ISentryEnvironmentProvider
     {
         public string JwtKey => Environment.GetEnvironmentVariable(nameof(JwtKey))
             ?? throw new Exception($"Missing {nameof(JwtKey)} environment variable");
@@ -47,7 +47,7 @@ namespace idb.Backend.Providers
         string Database { get; }
     }
 
-    public interface ISentryEnviormentProvider
+    public interface ISentryEnvironmentProvider
     {
         string SentryDns { get; }
         double SentryTraceSampleRate { get; }

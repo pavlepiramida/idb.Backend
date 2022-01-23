@@ -17,7 +17,7 @@ namespace idb.Backend
             Host.CreateDefaultBuilder(args)
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
-                    ISentryEnviormentProvider sentryEnv = new EnvironmentProvider();
+                    ISentryEnvironmentProvider sentryEnv = new EnvironmentProvider();
                     webBuilder.UseStartup<Startup>();
                     if (sentryEnv.SentryIntegration)
                         webBuilder.UseSentry(sentry =>

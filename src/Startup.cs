@@ -20,12 +20,7 @@ namespace idb.Backend
     public class Startup
     {
         public Startup(IConfiguration configuration)
-        {
-            Configuration = configuration;
-        }
-
-        public IConfiguration Configuration { get; }
-
+        { }
         public void ConfigureServices(IServiceCollection services)
         {
             var enviormentProvider = new EnvironmentProvider();
@@ -37,13 +32,13 @@ namespace idb.Backend
             services.AddSingleton<IDateTimeProvider, DateTimeProvider>();
             services.AddSingleton<IJwtEnvironmentProvider>(enviormentProvider);
             services.AddSingleton<IDatabaseEnvironmentProvider>(enviormentProvider);
-            services.AddSingleton<ISentryEnviormentProvider>(enviormentProvider);
+            services.AddSingleton<ISentryEnvironmentProvider>(enviormentProvider);
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<IItemRepository, ItemRepository>();
             services.AddScoped<ITagRepository, TagRepository>();
             services.AddSingleton<IMongoClient>(x =>
             {
-                var conn = x.GetService<IDatabaseEnvironmentProvider>().DatabaseConnection;
+                var conn = x.GetService<IDatabaseEnvironmentProvider>()?.DatabaseConnection;
                 return new MongoClient(conn);
             });
 

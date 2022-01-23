@@ -3,11 +3,11 @@ using MongoDB.Driver;
 
 namespace idb.Backend.DataAccess
 {
-    public interface IidbContext
+    public interface IIdbContext
     {
         IMongoCollection<TEntity> GetCollection<TEntity>(string name);
     }
-    public class IdbContext : IidbContext
+    public class IdbContext : IIdbContext
     {
         private IMongoDatabase _db { get; set; }
         private IMongoClient _mongoClient { get; set; }
