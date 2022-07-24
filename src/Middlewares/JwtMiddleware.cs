@@ -16,7 +16,7 @@ namespace idb.Backend.Middlewares
 
         public async Task InvokeAsync(HttpContext context, IJwtTokenValidator validator)
         {
-            var token = context.Request.Headers["Authorization"].FirstOrDefault()?.Split(" ").Last();
+            var token = context.Request.Headers["Authorization"].ToString()?.Split(" ").Last();
 
             if (validator.TryValidateJwtToken(token, out var validatedToken))
                 context.Items["userId"] = validatedToken.Claims.FirstOrDefault(x => x.Type == "userId")?.Value;
