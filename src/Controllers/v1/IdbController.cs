@@ -2,6 +2,7 @@
 using idb.Backend.DataAccess.Models;
 using idb.Backend.DataAccess.Repositories;
 using idb.Backend.Requests.v1;
+using idb.Backend.Storage;
 using Markdig;
 using Markdig.SyntaxHighlighting.Core;
 using Microsoft.AspNetCore.Mvc;
@@ -143,6 +144,14 @@ namespace idb.Backend.Controllers.v1
         {
             await _itemRepository.Delete(itemId);
             return new OkObjectResult(null);
+        }
+
+        [HttpPost("image_upload")]
+        public IActionResult PostImage([FromServices] IImageStorage azureStorage, [FromBody] ImageUpload imageInformation)
+        {
+            (var uploadUrl, var imageUrl) = azureStorage.GetImageUrls(imageInformation.filename);
+
+            return new OkObjectResult(new ImageUploadResponse(uploadUrl, imageUrl));
         }
     }
 }

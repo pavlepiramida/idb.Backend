@@ -18,4 +18,8 @@ namespace idb.Backend.Requests.v1
         DateTime joined_at, bool is_admin);
 
     public record TokenResponse(string token);
+
+    public record ImageUpload(string filename, string content_type);
+
+    public record ImageUploadResponse(string signed_url, string upload_to);
 }
