@@ -27,9 +27,7 @@ namespace idb.Backend.Tests.Controllers.v1
             };
             var mockUserRepository = new Mock<IUserRepository>();
             mockUserRepository.Setup(x => x.Get()).ReturnsAsync(new List<User> { user });
-            var mockTagsRepository = new Mock<TagRepository>();
-            var mockItemRepository = new Mock<ItemRepository>();
-            var controller = new IdbController(mockUserRepository.Object, mockTagsRepository.Object, mockItemRepository.Object);
+            var controller = new UsersController(mockUserRepository.Object);
 
             var response = await controller.GetUsers();
             var okObject = (OkObjectResult)response;
@@ -53,9 +51,7 @@ namespace idb.Backend.Tests.Controllers.v1
                 created_at = DateTime.Now
             };
             mockTagsRepository.Setup(x => x.Get()).ReturnsAsync(new List<Tag>() { tag });
-            var mockUserRepository = new Mock<IUserRepository>();
-            var mockItemRepository = new Mock<IItemRepository>();
-            var controller = new IdbController(mockUserRepository.Object, mockTagsRepository.Object, mockItemRepository.Object);
+            var controller = new TagsController(mockTagsRepository.Object);
 
             var response = await controller.GetTags();
             var okObject = (OkObjectResult)response;
@@ -72,9 +68,7 @@ namespace idb.Backend.Tests.Controllers.v1
         {
             var mockTagsRepository = new Mock<ITagRepository>();
             mockTagsRepository.Setup(x => x.Create(It.IsAny<Tag>())).Verifiable();
-            var mockUserRepository = new Mock<IUserRepository>();
-            var mockItemRepository = new Mock<IItemRepository>();
-            var controller = new IdbController(mockUserRepository.Object, mockTagsRepository.Object, mockItemRepository.Object);
+            var controller = new TagsController(mockTagsRepository.Object);
 
             var response = await controller.PostTag("tagName");
             var okObject = (OkResult)response;
@@ -103,7 +97,7 @@ namespace idb.Backend.Tests.Controllers.v1
                 .ReturnsAsync(new List<Item> { item });
             var mockTagsRepository = new Mock<ITagRepository>();
             var mockUserRepository = new Mock<IUserRepository>();
-            var controller = new IdbController(mockUserRepository.Object, mockTagsRepository.Object, mockItemRepository.Object);
+            var controller = new ItemsController(mockItemRepository.Object, mockUserRepository.Object, mockTagsRepository.Object);
 
             var response = await controller.GetItems("searchTerm", "1", 1);
             var okObject = (OkObjectResult)response;
@@ -125,9 +119,10 @@ namespace idb.Backend.Tests.Controllers.v1
                 It.IsAny<List<int>>(),
                 It.IsAny<string>()))
                 .ReturnsAsync((List<Item>)null);
+
             var mockTagsRepository = new Mock<ITagRepository>();
             var mockUserRepository = new Mock<IUserRepository>();
-            var controller = new IdbController(mockUserRepository.Object, mockTagsRepository.Object, mockItemRepository.Object);
+            var controller = new ItemsController(mockItemRepository.Object, mockUserRepository.Object, mockTagsRepository.Object);
 
             var response = await controller.GetItems("searchTerm", "1", 1);
             var okObject = (NotFoundResult)response;
@@ -152,7 +147,7 @@ namespace idb.Backend.Tests.Controllers.v1
             mockItemRepository.Setup(x => x.Get(It.IsAny<string>())).ReturnsAsync(item);
             var mockTagsRepository = new Mock<ITagRepository>();
             var mockUserRepository = new Mock<IUserRepository>();
-            var controller = new IdbController(mockUserRepository.Object, mockTagsRepository.Object, mockItemRepository.Object);
+            var controller = new ItemsController(mockItemRepository.Object, mockUserRepository.Object, mockTagsRepository.Object);
 
             var response = await controller.GetItem("long_ass_guid");
             var okObject = (OkObjectResult)response;
@@ -174,7 +169,7 @@ namespace idb.Backend.Tests.Controllers.v1
             mockItemRepository.Setup(x => x.Get(It.IsAny<string>())).ReturnsAsync((Item)null);
             var mockTagsRepository = new Mock<ITagRepository>();
             var mockUserRepository = new Mock<IUserRepository>();
-            var controller = new IdbController(mockUserRepository.Object, mockTagsRepository.Object, mockItemRepository.Object);
+            var controller = new ItemsController(mockItemRepository.Object, mockUserRepository.Object, mockTagsRepository.Object);
 
             var response = await controller.GetItem("long_ass_guid");
             var okObject = (NotFoundResult)response;
@@ -212,7 +207,7 @@ namespace idb.Backend.Tests.Controllers.v1
             var mockTagsRepository = new Mock<ITagRepository>();
             mockTagsRepository.Setup(x => x.GetByIds(It.IsAny<List<int>>())).ReturnsAsync(new List<Tag> { tag });
             var mockUserRepository = new Mock<IUserRepository>();
-            var controller = new IdbController(mockUserRepository.Object, mockTagsRepository.Object, mockItemRepository.Object);
+            var controller = new ItemsController(mockItemRepository.Object, mockUserRepository.Object, mockTagsRepository.Object);
             controller.ControllerContext.HttpContext = new DefaultHttpContext();
             controller.HttpContext.Items.Add("userId", userId);
 
@@ -262,7 +257,7 @@ namespace idb.Backend.Tests.Controllers.v1
             var mockTagsRepository = new Mock<ITagRepository>();
             mockTagsRepository.Setup(x => x.GetByIds(It.IsAny<List<int>>())).ReturnsAsync(new List<Tag> { tag });
             var mockUserRepository = new Mock<IUserRepository>();
-            var controller = new IdbController(mockUserRepository.Object, mockTagsRepository.Object, mockItemRepository.Object);
+            var controller = new ItemsController(mockItemRepository.Object, mockUserRepository.Object, mockTagsRepository.Object);
 
             var response = await controller.PatchItems(Guid.NewGuid().ToString("N"), itemPatch);
             var okObject = (OkObjectResult)response;
@@ -279,11 +274,11 @@ namespace idb.Backend.Tests.Controllers.v1
         [Test]
         public async Task DeleteItem_should_return_200_OK()
         {
-            var mockItemRepositiry = new Mock<IItemRepository>();
-            mockItemRepositiry.Setup(x => x.Delete(It.IsAny<string>())).Verifiable();
+            var mockItemRepository = new Mock<IItemRepository>();
+            mockItemRepository.Setup(x => x.Delete(It.IsAny<string>())).Verifiable();
             var mockTagsRepository = new Mock<ITagRepository>();
             var mockUserRepository = new Mock<IUserRepository>();
-            var controller = new IdbController(mockUserRepository.Object, mockTagsRepository.Object, mockItemRepositiry.Object);
+            var controller = new ItemsController(mockItemRepository.Object, mockUserRepository.Object, mockTagsRepository.Object);
 
             var response = await controller.DeleteItem(Guid.NewGuid().ToString("N"));
             var okObject = (OkObjectResult)response;
@@ -292,7 +287,7 @@ namespace idb.Backend.Tests.Controllers.v1
 
             Assert.AreEqual(200, statusCode);
             Assert.IsNull(responseBody);
-            mockItemRepositiry.Verify();
+            mockItemRepository.Verify();
         }
 
     }
