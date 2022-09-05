@@ -1,4 +1,4 @@
-name: Build and deploy .NET Core application to Web App idbbackend
+name: Build and deploy idb.Backend
 on:
   push:
     branches:
@@ -8,7 +8,8 @@ env:
   AZURE_WEBAPP_PACKAGE_PATH: ./publish
   CONFIGURATION: Release
   DOTNET_CORE_VERSION: 6.0.x
-  WORKING_DIRECTORY: .
+  WORKING_DIRECTORY: src/.
+  RUNTIME_TARGET: linux-x64
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -25,7 +26,7 @@ jobs:
     - name: Test
       run: dotnet test "${{ env.WORKING_DIRECTORY }}" --no-build
     - name: Publish
-      run: dotnet publish "${{ env.WORKING_DIRECTORY }}" --configuration ${{ env.CONFIGURATION }} --no-build --output "${{ env.AZURE_WEBAPP_PACKAGE_PATH }}"
+      run: dotnet publish src/idb.Backend.csproj --configuration ${{ env.CONFIGURATION }}  --output "${{ env.AZURE_WEBAPP_PACKAGE_PATH }}" --runtime "${{ env.RUNTIME_TARGET }}" --self-contained=true
     - name: Deploy to Azure WebApp
       uses: azure/webapps-deploy@v2
       with:
