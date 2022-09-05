@@ -1,5 +1,6 @@
 ﻿using Azure.Storage.Blobs;
 using Azure.Storage.Sas;
+using idb.Backend.Providers;
 using System;
 
 namespace idb.Backend.Storage
@@ -12,9 +13,9 @@ namespace idb.Backend.Storage
     {
         private readonly BlobContainerClient _blobContainerClient;
 
-        public AzureImageStorage(BlobServiceClient blobServiceClient)
+        public AzureImageStorage(BlobServiceClient blobServiceClient, IAzureStorageImageProvider enviormentProvider)
         {
-            var imageContainerName = Environment.GetEnvironmentVariable("AzureImageContainer");
+            var imageContainerName = enviormentProvider.AzureImageContainerName;
             _blobContainerClient = blobServiceClient.GetBlobContainerClient(imageContainerName);
         }
 

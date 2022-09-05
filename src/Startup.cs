@@ -35,12 +35,13 @@ namespace idb.Backend
             services.AddSingleton<IJwtEnvironmentProvider>(enviormentProvider);
             services.AddSingleton<IDatabaseEnvironmentProvider>(enviormentProvider);
             services.AddSingleton<ISentryEnvironmentProvider>(enviormentProvider);
+            services.AddSingleton<IAzureStorageImageProvider>(enviormentProvider);
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<IItemRepository, ItemRepository>();
             services.AddScoped<ITagRepository, TagRepository>();
             services.AddSingleton(x =>
             {
-                var connectionString = Environment.GetEnvironmentVariable("AzureStorageConnection");
+                var connectionString = enviormentProvider.AzureStorageConnection;
                 return new BlobServiceClient(connectionString);
             });
             services.AddSingleton<IMongoClient>(x =>
