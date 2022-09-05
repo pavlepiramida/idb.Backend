@@ -1,8 +1,10 @@
+using Azure.Storage.Blobs;
 using idb.Backend.DataAccess;
 using idb.Backend.DataAccess.Repositories;
 using idb.Backend.Middlewares;
 using idb.Backend.Providers;
 using idb.Backend.Services;
+using idb.Backend.Storage;
 using idb.Backend.Validators;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -33,15 +35,21 @@ namespace idb.Backend
             services.AddSingleton<IJwtEnvironmentProvider>(enviormentProvider);
             services.AddSingleton<IDatabaseEnvironmentProvider>(enviormentProvider);
             services.AddSingleton<ISentryEnvironmentProvider>(enviormentProvider);
+            services.AddSingleton<IAzureStorageImageProvider>(enviormentProvider);
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<IItemRepository, ItemRepository>();
             services.AddScoped<ITagRepository, TagRepository>();
+            services.AddSingleton(x =>
+            {
+                var connectionString = enviormentProvider.AzureStorageConnection;
+                return new BlobServiceClient(connectionString);
+            });
             services.AddSingleton<IMongoClient>(x =>
             {
                 var conn = x.GetService<IDatabaseEnvironmentProvider>()?.DatabaseConnection;
                 return new MongoClient(conn);
             });
-
+            services.AddScoped<IImageStorage, AzureImageStorage>();
             services.AddSentry();
 
             services.AddSwaggerGen(c =>

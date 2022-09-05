@@ -2,7 +2,7 @@
 
 namespace idb.Backend.Providers
 {
-    public class EnvironmentProvider : IJwtEnvironmentProvider, IDatabaseEnvironmentProvider, ISentryEnvironmentProvider
+    public class EnvironmentProvider : IJwtEnvironmentProvider, IDatabaseEnvironmentProvider, ISentryEnvironmentProvider, IAzureStorageImageProvider
     {
         public string JwtKey => Environment.GetEnvironmentVariable(nameof(JwtKey))
             ?? throw new Exception($"Missing {nameof(JwtKey)} environment variable");
@@ -30,6 +30,12 @@ namespace idb.Backend.Providers
         public double SentryTraceSampleRate => double.Parse(Environment.GetEnvironmentVariable(nameof(SentryTraceSampleRate)) ?? "1.0");
 
         public bool SentryIntegration => !string.IsNullOrEmpty(SentryDns);
+
+        public string AzureStorageConnection => Environment.GetEnvironmentVariable(nameof(AzureStorageConnection))
+            ?? throw new Exception($"Missing {nameof(AzureStorageConnection)} environment variable");
+
+        public string AzureImageContainerName => Environment.GetEnvironmentVariable(nameof(AzureImageContainerName))
+            ?? throw new Exception($"Missing {nameof(AzureImageContainerName)} environment variable");
     }
 
 
@@ -52,5 +58,11 @@ namespace idb.Backend.Providers
         string SentryDns { get; }
         double SentryTraceSampleRate { get; }
         bool SentryIntegration { get; }
+    }
+
+    public interface IAzureStorageImageProvider
+    {
+        string AzureStorageConnection { get; }
+        string AzureImageContainerName { get; }
     }
 }
